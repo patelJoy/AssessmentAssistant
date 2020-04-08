@@ -38,7 +38,7 @@ public class QuestionsImport extends HttpServlet {
 		
 		
 		Part filePart = request.getPart("fileUpload");
-        int batchSize = 20;
+        int batchSize = 10;
         int noOfQuestions = 0;
         String dept = String.valueOf(request.getSession().getAttribute("facultyDepartment"));
         int batch = Integer.parseInt(request.getParameter("batch"));
@@ -142,9 +142,51 @@ public class QuestionsImport extends HttpServlet {
             while(rs1.next()) {
             	qIds.add(rs1.getInt(1));
             }
+            rs1.close();
             
-            String query2 = "select ";
-             
+            String query2 = "select student_username from student_info where student_batch=? and student_department=?";
+            PreparedStatement ps2 = con.prepareStatement(query2);
+            ps2.setInt(1, batch);
+            ps2.setString(2, dept);
+            ResultSet rs2 = ps2.executeQuery();
+            ArrayList<String> ernos = new ArrayList<String>();
+            while(rs2.next()) {
+            	ernos.add(rs2.getString(1));
+            }
+            rs2.close();
+            
+            st = "answers_" + request.getParameter("testId");
+            String query3 = "CREATE TABLE "+ st +" (\r\n" + 
+            		"  `a_erno` VARCHAR(16) NOT NULL,\r\n";
+            int size = qIds.size();
+            for(int i=0;i<size;i++) {
+            	query3 += " `a_ "+ qIds.get(i) + "` LONGTEXT NULL,\r\n";
+            }
+            query3 += "  `a_markslist` MEDIUMTEXT NULL,\r\n" + 
+            		"  PRIMARY KEY (`a_erno`));";
+            
+            con.prepareStatement(query3).executeUpdate();
+            
+            String query4 = "insert into " + st + "(a_erno) values (?);";          
+            con.setAutoCommit(false);
+            int ersize = ernos.size();
+            PreparedStatement ps4 = con.prepareStatement(query4);
+            
+            for(int i=0;i<ersize;i++) {
+            	ps4.setString(1, ernos.get(i));
+            	
+            	ps4.addBatch();
+                
+                if (i % (batchSize+10) == 0) {
+                    ps4.executeBatch();
+                }
+            }
+            
+            ps4.executeBatch();
+            con.commit();
+            con.close();
+            
+            
         } catch (IOException ex1) {
             System.out.println("Error reading file");
             ex1.printStackTrace();

@@ -98,9 +98,6 @@ function rotate(){
                   <div class="text-center">
                     <a class="small" href="forgot-password.html">Forgot Password?</a>
                   </div>
-                  <div class="text-center">
-                    <a class="small" href="register.html">Create an Account!</a>
-                  </div>
                   <%
 						String role = request.getParameter("roleSelect");
 						if (request.getParameter("btnLogin") != null && role.equals("Admin")) {

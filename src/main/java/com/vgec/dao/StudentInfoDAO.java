@@ -106,4 +106,67 @@ public class StudentInfoDAO {
         }
 	}
 	
+	public static void deleteStudentBatch(int batch, String dept) {
+		int batchSize = 20;
+		Connection con = DB_Connection.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		String query = "select test_id from test where test_batch=? and test_department=?";
+		ArrayList<Integer> testIds = new ArrayList<Integer>();
+		try {
+			ps = con.prepareStatement(query);
+			ps.setInt(1, batch);
+			ps.setString(2, dept);
+			rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				testIds.add(rs.getInt(1));
+			}
+			int size = testIds.size();
+			if(size != 0) {
+				String query1 = "drop table IF EXISTS ";
+				for(int i=0;i<size;i++) {
+					query1 += "questions_" + testIds.get(i);
+					query1 += ", ";
+					query1 += "answers_" + testIds.get(i);
+					if(i != (size - 1)) {
+						query1 += ", ";
+					} else {
+						query1 += ";";
+					}
+				}
+				con.prepareStatement(query1).executeUpdate();
+			
+				String query2 = "delete from test where test_id=?";
+				PreparedStatement ps1 = con.prepareStatement(query2);
+				con.setAutoCommit(false);
+				for(int i=0;i<size;i++) {
+					ps1.setInt(1, testIds.get(i));
+					ps1.addBatch();
+					if(i % batchSize == 0) {
+						ps1.executeBatch();
+					}
+				}
+				ps1.executeBatch();
+				con.commit();
+			}
+			con.setAutoCommit(true);
+			String query3 = "delete from student_info where student_batch=?";
+			PreparedStatement ps2 = con.prepareStatement(query3);
+			ps2.setInt(1, batch);
+			ps2.executeUpdate();
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+            try {   
+                ps.close();
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+	}
 }

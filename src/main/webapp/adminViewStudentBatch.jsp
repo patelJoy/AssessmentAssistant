@@ -271,7 +271,7 @@
                                 </form>
                                 </td>
                                 <td>
-                                    <a href="adminStudentBatchDelete.jsp" class="btn btn-danger btn-circle btn-sm">
+                                    <a href="adminStudentBatchDelete.jsp?batch=<c:out value="${ item }"/>" class="btn btn-danger btn-circle btn-sm">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </td>

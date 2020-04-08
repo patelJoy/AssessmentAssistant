@@ -49,14 +49,10 @@ public class FacultyInfoDAO {
 		PreparedStatement ps = null;
 		PreparedStatement ps1 = null;
 		
-		String query = "delete from test where test_fid=?";
 		String query1 = "delete from faculty_info where faculty_id=?";
 		try {
-			ps = con.prepareStatement(query);
 			ps1 = con.prepareStatement(query1);
-			ps.setInt(1, id);
 			ps1.setInt(1, id);
-			ps.executeUpdate();
 			ps1.executeUpdate();
 			
 		} catch (SQLException e) {
