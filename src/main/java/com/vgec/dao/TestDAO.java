@@ -8,7 +8,10 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.vgec.bean.FacultyInfo;
 import com.vgec.bean.Test;
@@ -120,5 +123,86 @@ public class TestDAO {
             }
         }
 		return testId;
+	}
+	
+	public static ArrayList<Test> getPendingTests(int id){
+		Connection con = DB_Connection.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ArrayList<Test> ts = new ArrayList<Test>();
+		ArrayList<Test> sel = new ArrayList<Test>();
+		
+		String query = "select * from test where test_fid=?";
+		try {
+			ps = con.prepareStatement(query);
+			ps.setInt(1, id);
+			rs = ps.executeQuery();
+			
+			Test t = null;
+			while(rs.next()) {
+				t = new Test();
+				t.setId(rs.getInt("test_id"));
+				t.setBatch(rs.getInt("test_batch"));
+				t.setSubject(rs.getString("test_subject"));
+				t.setCategory(rs.getString("test_category"));
+				t.setTotalmarks(rs.getInt("test_totalmarks"));;
+				t.setDate(Date.valueOf(rs.getString("test_date")));
+				t.setFromtime(rs.getTime("test_fromtime"));
+				t.setTotime(rs.getTime("test_totime"));
+				t.setDuration(rs.getInt("test_duration"));
+				ts.add(t);
+			}
+			int size = ts.size();
+			if(size != 0) {
+				LocalTime currentTime = LocalTime.now();
+				java.util.Date currentDate = new java.util.Date();  
+				
+				for(int i=0;i<size;i++) {
+					java.util.Date utilDate = new java.util.Date(ts.get(i).getDate().getTime());
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(utilDate);
+					cal.add(Calendar.HOUR, ts.get(i).getTotime().getHours());
+					cal.add(Calendar.MINUTE, ts.get(i).getTotime().getMinutes());
+					java.util.Date update = cal.getTime();
+					if(currentDate.compareTo(update) < 0) {
+				         sel.add(ts.get(i));
+				      }
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+            try {   
+                ps.close();
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+		return sel;
+	}
+	
+	public static void facultyDeleteTest(int testId) {
+		Connection con = DB_Connection.getConnection();
+		PreparedStatement ps = null;
+		
+		String query = "drop table questions_" + testId + ", " + "answers_" + testId + ";";
+		String query1 = "delete from test where test_id=?";
+		try {
+			con.prepareStatement(query).executeUpdate();
+			ps = con.prepareStatement(query1);
+			ps.setInt(1, testId);
+			ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+            try {   
+                ps.close();
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 }

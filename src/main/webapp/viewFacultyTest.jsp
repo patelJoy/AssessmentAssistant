@@ -266,6 +266,7 @@
                           </thead>
                           <tbody>
                           <% ArrayList<Test> ts = TestDAO.getFacultyTest(Integer.parseInt(request.getParameter("id")));
+                          if(ts != null){
                           	session.setAttribute("ts",ts);
                           %>
                           <c:forEach items="${ts}" var="item">
@@ -279,6 +280,7 @@
                                 <td>5</td>
                               </tr>
                            </c:forEach>
+                           <%} %>
                           </tbody>
                         </table>
                       </div>

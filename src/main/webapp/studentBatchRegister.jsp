@@ -334,7 +334,12 @@
 
   <!-- Custom scripts for all pages-->
   <script src="js/sb-admin-2.min.js"></script>
-
+<script type="application/javascript">
+    $('input[type="file"]').change(function(e){
+        var fileName = e.target.files[0].name;
+        $(e.target).parent('div').find('label').html(fileName)
+    });
+</script>
 </body>
 
 </html>
