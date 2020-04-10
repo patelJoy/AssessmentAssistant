@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -80,12 +81,22 @@ public class QuestionsImport extends HttpServlet {
                         statement.setInt(1, q_type);
                         break;
                     case 1:
-                        String ques = nextCell.getStringCellValue();
-                        statement.setString(2, ques);
+                    	if(nextCell.getCellType() == CellType.STRING) {
+                    		String ques = nextCell.getStringCellValue();
+                            statement.setString(2, ques);
+                    	}else {
+                    		String ques = String.valueOf(nextCell.getNumericCellValue());
+                            statement.setString(2, ques);
+                    	}
                         break;
                     case 2:                    
-                    	String ans = nextCell.getStringCellValue();
-                        statement.setString(3, ans);
+                    	if(nextCell.getCellType() == CellType.STRING) {
+                    		String ans = nextCell.getStringCellValue();
+                            statement.setString(3, ans);
+                    	}else {
+                    		String ans = String.valueOf(nextCell.getNumericCellValue());
+                            statement.setString(3, ans);
+                    	}
                         break;
                     case 3:
                     	int marks = (int)nextCell.getNumericCellValue();
@@ -96,20 +107,40 @@ public class QuestionsImport extends HttpServlet {
                     	statement.setString(5, co);
                     	break;
                     case 5:
-                    	String a = nextCell.getStringCellValue();
-                    	statement.setString(6, a);
+                    	if(nextCell.getCellType() == CellType.STRING) {
+                    		String a = nextCell.getStringCellValue();
+                            statement.setString(6, a);
+                    	}else {
+                    		String a = String.valueOf(nextCell.getNumericCellValue());
+                            statement.setString(6, a);
+                    	}
                     	break;
                     case 6:
-                   		String b = nextCell.getStringCellValue();
-                   		statement.setString(7, b);
+                    	if(nextCell.getCellType() == CellType.STRING) {
+                    		String b = nextCell.getStringCellValue();
+                            statement.setString(7, b);
+                    	}else {
+                    		String b = String.valueOf(nextCell.getNumericCellValue());
+                            statement.setString(7, b);
+                    	}
                     	break;
                     case 7:
-                    	String c = nextCell.getStringCellValue();
-                    	statement.setString(8, c);
+                    	if(nextCell.getCellType() == CellType.STRING) {
+                    		String c = nextCell.getStringCellValue();
+                            statement.setString(8, c);
+                    	}else {
+                    		String c = String.valueOf(nextCell.getNumericCellValue());
+                            statement.setString(8, c);
+                    	}
                     	break;
                     case 8:
-                   		String d = nextCell.getStringCellValue();
-                   		statement.setString(9, d);
+                    	if(nextCell.getCellType() == CellType.STRING) {
+                    		String d = nextCell.getStringCellValue();
+                            statement.setString(9, d);
+                    	}else {
+                    		String d = String.valueOf(nextCell.getNumericCellValue());
+                            statement.setString(9, d);
+                    	}
                     	break;
                     }
                 }

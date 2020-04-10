@@ -13,7 +13,7 @@
 		} else if (userRole.equals("faculty")) {
 			response.sendRedirect("facultyCreateTest.jsp");
 		} else if (userRole.equals("student")) {
-			response.sendRedirect("studentHome.jsp");
+			response.sendRedirect("studentPendingTests.jsp");
 		} else {
 %>
 <!DOCTYPE html>
@@ -166,7 +166,7 @@ function rotate(){
 								session.setAttribute("studentDepartment", dept);
 								session.setAttribute("studentBatch", batch);
 								session.setAttribute("studentEmail", email);
-								response.sendRedirect("studentHome.jsp");
+								response.sendRedirect("studentPendingTests.jsp");
 							} else {
 								out.println("<script>alert('Wrong username or password')</script>");
 							}

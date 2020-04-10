@@ -23,7 +23,6 @@
 	}else{
 		response.sendRedirect("facultyViewResult.jsp");
 	}
-	
 %>
 </body>
 </html>

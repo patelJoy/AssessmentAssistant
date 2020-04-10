@@ -49,7 +49,7 @@
                 <td>${item.fromtime } - ${item.totime }</td>
                 <td>${item.totalmarks }</td>
                 <td>${item.duration }</td>
-                <td><a href="facultyTestDelete.jsp?testId=<c:out value="${ item.testid }"/>&page=test" class="btn btn-danger btn-circle btn-sm">
+                <td><a href="facultyTestDelete.jsp?testId=<c:out value="${ item.id }"/>&page=test" class="btn btn-danger btn-circle btn-sm">
                     <i class="fas fa-trash"></i>
                   </a></td>
               </tr>

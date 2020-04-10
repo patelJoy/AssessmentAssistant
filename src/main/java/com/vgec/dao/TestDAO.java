@@ -12,12 +12,56 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 
 import com.vgec.bean.FacultyInfo;
+import com.vgec.bean.Question;
 import com.vgec.bean.Test;
 import com.vgec.util.DB_Connection;
 
 public class TestDAO {
+	
+	public static ArrayList<Question> getQuestions(int tid){
+		Connection con = DB_Connection.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ArrayList<Question> ts = new ArrayList<Question>();
+		
+		String query = "select * from questions_"+tid;
+		try {
+			ps = con.prepareStatement(query);
+			rs = ps.executeQuery();
+			
+			Question t = null;
+			while(rs.next()) {
+				t = new Question();
+				t.setId(rs.getInt("q_id"));
+				t.setType(rs.getInt("q_type"));
+				t.setMarks(rs.getInt("q_marks"));
+				t.setQuestion(rs.getString("q_question"));
+				t.setAnswer(rs.getString("q_answer"));
+				t.setCo(rs.getString("q_co"));
+				if(rs.getInt("q_type") != 1) {
+					t.setA(rs.getString("q_a"));
+					t.setB(rs.getString("q_b"));
+					t.setC(rs.getString("q_c"));
+					t.setD(rs.getString("q_d"));
+				}
+				ts.add(t);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+            try {   
+                ps.close();
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+		Collections.shuffle(ts);
+		return ts;
+	}
 	
 	public static ArrayList<Test> getFacultyTest(int id) {
 		Connection con = DB_Connection.getConnection();
@@ -123,6 +167,68 @@ public class TestDAO {
             }
         }
 		return testId;
+	}
+	
+	public static ArrayList<Test> getPendingTests(int batch, String dept){
+		Connection con = DB_Connection.getConnection();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ArrayList<Test> ts = new ArrayList<Test>();
+		ArrayList<Test> sel = new ArrayList<Test>();
+		
+		String query = "select * from test where test_batch=? and test_department=?";
+		try {
+			ps = con.prepareStatement(query);
+			ps.setInt(1, batch);
+			ps.setString(2, dept);
+			rs = ps.executeQuery();
+			
+			Test t = null;
+			while(rs.next()) {
+				t = new Test();
+				t.setId(rs.getInt("test_id"));
+				t.setBatch(rs.getInt("test_batch"));
+				t.setSubject(rs.getString("test_subject"));
+				t.setCategory(rs.getString("test_category"));
+				t.setTotalmarks(rs.getInt("test_totalmarks"));;
+				t.setDate(Date.valueOf(rs.getString("test_date")));
+				t.setFromtime(rs.getTime("test_fromtime"));
+				t.setTotime(rs.getTime("test_totime"));
+				t.setDuration(rs.getInt("test_duration"));
+				ts.add(t);
+			}
+			int size = ts.size();
+			if(size != 0) {
+				java.util.Date currentDate = new java.util.Date();  
+				
+				for(int i=0;i<size;i++) {
+					java.util.Date utilDate = new java.util.Date(ts.get(i).getDate().getTime());
+					Calendar calTo = Calendar.getInstance();
+					Calendar cal = Calendar.getInstance();
+					calTo.setTime(utilDate);
+					cal.setTime(utilDate);
+					calTo.add(Calendar.HOUR, ts.get(i).getFromtime().getHours());
+					cal.add(Calendar.HOUR, ts.get(i).getTotime().getHours());
+					calTo.add(Calendar.MINUTE, ts.get(i).getFromtime().getMinutes());
+					cal.add(Calendar.MINUTE, ts.get(i).getTotime().getMinutes());
+					java.util.Date update = cal.getTime();
+					java.util.Date updateTo = calTo.getTime();
+					if(currentDate.compareTo(update) < 0 && currentDate.compareTo(updateTo) > 0) {
+				         sel.add(ts.get(i));
+				    }
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+            try {   
+                ps.close();
+                con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+		return sel;
 	}
 	
 	public static ArrayList<Test> getPendingTests(int id){
