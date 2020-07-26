@@ -1,5 +1,7 @@
 package com.vgec.controller;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,7 +39,17 @@ public class QuestionsImport extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+        String dirPath = "C:\\Users\\patel\\Downloads\\pj2";
+
+        String testDirName = request.getParameter("testId");
+       
+        File testDirectory = new File(dirPath + File.separator + "test_"+ testDirName);
+        testDirectory.mkdirs();
+
+        File idealDirectory = new File(testDirectory + File.separator + "Ideal");
+        idealDirectory.mkdir();
 		
+		ArrayList<String> answ = new ArrayList<String>();
 		Part filePart = request.getPart("fileUpload");
         int batchSize = 10;
         int noOfQuestions = 0;
@@ -92,9 +104,11 @@ public class QuestionsImport extends HttpServlet {
                     case 2:                    
                     	if(nextCell.getCellType() == CellType.STRING) {
                     		String ans = nextCell.getStringCellValue();
+                    		answ.add(ans);
                             statement.setString(3, ans);
                     	}else {
                     		String ans = String.valueOf(nextCell.getNumericCellValue());
+                    		answ.add(ans);
                             statement.setString(3, ans);
                     	}
                         break;
@@ -167,13 +181,30 @@ public class QuestionsImport extends HttpServlet {
             connection.close();
              
             con = DB_Connection.getConnection();
-            String query1 = "select q_id from "+st;
+            String query1 = "select q_id,q_type from "+st;
             ResultSet rs1 = con.prepareStatement(query1).executeQuery();
             ArrayList<Integer> qIds = new ArrayList<Integer>();  
+            int j = 0;
             while(rs1.next()) {
+            	if(rs1.getInt(2) == 1) {
+            		File newFile = new File(idealDirectory + File.separator + "q_" +rs1.getInt(1) + ".txt");
+                    boolean isCreated = newFile.createNewFile();
+                    if (isCreated) {
+                    	System.out.println(rs1.getInt(1)+ " "+answ.get(j));
+                        FileWriter myWriter = new FileWriter(newFile);
+                        myWriter.write(answ.get(j));
+                        myWriter.close();
+                    } else {
+                        System.out.printf("\n2. Unable to create new file");
+                    }
+            	}
             	qIds.add(rs1.getInt(1));
+            	j++;
             }
             rs1.close();
+            
+            
+            
             
             String query2 = "select student_username from student_info where student_batch=? and student_department=?";
             PreparedStatement ps2 = con.prepareStatement(query2);
@@ -188,12 +219,13 @@ public class QuestionsImport extends HttpServlet {
             
             st = "answers_" + request.getParameter("testId");
             String query3 = "CREATE TABLE "+ st +" (\r\n" + 
-            		"  `a_erno` VARCHAR(16) NOT NULL,\r\n";
+            		"  `a_erno` VARCHAR(16) NOT NULL DEFAULT 0,\r\n";
             int size = qIds.size();
             for(int i=0;i<size;i++) {
-            	query3 += " `a_ "+ qIds.get(i) + "` LONGTEXT NULL,\r\n";
+            	query3 += " `a_"+ qIds.get(i) + "` LONGTEXT NULL,\r\n";
             }
             query3 += "  `a_markslist` MEDIUMTEXT NULL,\r\n" + 
+            		"  `attempted` INT NOT NULL DEFAULT 0,\r\n" +
             		"  PRIMARY KEY (`a_erno`));";
             
             con.prepareStatement(query3).executeUpdate();

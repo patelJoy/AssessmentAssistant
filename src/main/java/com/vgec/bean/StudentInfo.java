@@ -3,6 +3,21 @@ package com.vgec.bean;
 public class StudentInfo {
 	String name;
 	String username;
+	String erno;
+	int marks;
+	
+	public String getErno() {
+		return erno;
+	}
+	public void setErno(String erno) {
+		this.erno = erno;
+	}
+	public int getMarks() {
+		return marks;
+	}
+	public void setMarks(int marks) {
+		this.marks = marks;
+	}
 	public String getUsername() {
 		return username;
 	}

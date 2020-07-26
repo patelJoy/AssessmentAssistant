@@ -37,7 +37,7 @@
               </tr>
             </thead>
             <tbody>
-            <% ArrayList<Test> pt = TestDAO.getPendingTests((Integer)session.getAttribute("facultyId"));
+            <% ArrayList<Test> pt = TestDAO.getPendingTests((Integer)session.getAttribute("facultyId"), false);
             	if(pt != null){
             	session.setAttribute("pt", pt);
             %>

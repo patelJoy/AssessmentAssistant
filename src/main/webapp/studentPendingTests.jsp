@@ -43,10 +43,17 @@
                   </thead>
                   <tbody>
                   <%ArrayList<Test> pt = TestDAO.getPendingTests((Integer)session.getAttribute("studentBatch"),String.valueOf(session.getAttribute("studentDepartment")));
-            		if(pt != null){
-            		session.setAttribute("pt", pt); 
+                   	ArrayList<Test> p = new ArrayList<Test>();
+                    int size = pt.size();
+                   	for(int i=0;i<size;i++){
+                   		if(TestDAO.getAttempt(String.valueOf(session.getAttribute("studentUsername")), pt.get(i).getId())){
+                   			p.add(pt.get(i));
+                   		}
+                   	}
+            		if(p != null){
+            		session.setAttribute("p", p); 
             		%>
-            		<c:forEach items="${pt}" var="item">
+            		<c:forEach items="${p}" var="item">
                       <tr>
                         <td>${item.subject }</td>
                         <td>${item.category }</td>

@@ -1,3 +1,5 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.sql.Time"%>
 <%@page import="java.util.Calendar"%>
 <%@ page session="true" %>
 <%@ page isELIgnored="false" %>
@@ -84,14 +86,17 @@
 		 if(dur == 1){
 			 cal.add(Calendar.HOUR, 1);
 		 }else if(dur == 2){
-			 cal.add(Calendar.HOUR, 1);
+			 cal.add(Calendar.HOUR, 2);
 		 }else if(dur == 15){
 			 cal.add(Calendar.MINUTE, 15);
 		 }else if(dur == 30){
 			 cal.add(Calendar.MINUTE, 30);
 		 }
 		 java.util.Date endtime = cal.getTime();
-		 session.setAttribute("endtime", endtime.getTime());
+		 
+		session.setAttribute("endtime", endtime.getTime());	 
+		
+		 
 		 response.sendRedirect("studentGiveTest.jsp");
 	 }
 	%>

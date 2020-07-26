@@ -10,8 +10,28 @@
   	<description></description>
   	<servlet-class>com.vgec.controller.QuestionsImport</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>StoreAnswers</servlet-name>
+  	<display-name>StoreAnswers</display-name>
+  	<description></description>
+  	<servlet-class>com.vgec.controller.StoreAnswers</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>Evaluate</servlet-name>
+  	<display-name>Evaluate</display-name>
+  	<description></description>
+  	<servlet-class>com.vgec.controller.Evaluate</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>QuestionsImport</servlet-name>
   	<url-pattern>/QuestionsImport</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>StoreAnswers</servlet-name>
+  	<url-pattern>/StoreAnswers</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>Evaluate</servlet-name>
+  	<url-pattern>/Evaluate</url-pattern>
   </servlet-mapping>
 </web-app>

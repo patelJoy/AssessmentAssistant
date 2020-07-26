@@ -53,13 +53,6 @@
       <hr class="sidebar-divider">
 
       <li class="nav-item">
-        <a class="nav-link" href="facultyCourseObjective.jsp">
-          <span>Course Objectives</span></a>
-      </li>
-
-      <hr class="sidebar-divider">
-
-      <li class="nav-item">
         <a class="nav-link" href="facultyCreateTest.jsp">
           <span>Create Test</span></a>
       </li>
@@ -77,14 +70,14 @@
         <a class="nav-link" href="facultyViewResult.jsp">
           <span>View Result</span></a>
       </li>
-
-      <hr class="sidebar-divider">
+		
+		<hr class="sidebar-divider">
 
       <li class="nav-item">
-        <a class="nav-link" href="facultyViewAssessmentReport.jsp">
-          <span>View Assessment Report</span></a>
+        <a class="nav-link" href="facultyCourseObjective.jsp">
+          <span>Course Objectives</span></a>
       </li>
-    
+		    
       <hr class="sidebar-divider d-none d-md-block">
 
       <!-- Sidebar Toggler (Sidebar) -->

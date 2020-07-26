@@ -19,7 +19,7 @@
 <body>
 <% TestDAO.facultyDeleteTest(Integer.parseInt(request.getParameter("testId")));
 	if(request.getParameter("page").equals("test")){
-		response.sendRedirect("facultyViewTest");	
+		response.sendRedirect("facultyViewTest.jsp");	
 	}else{
 		response.sendRedirect("facultyViewResult.jsp");
 	}

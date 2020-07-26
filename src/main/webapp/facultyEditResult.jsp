@@ -1,3 +1,4 @@
+<%@page import="com.vgec.bean.Marksheet"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="com.vgec.dao.TestDAO"%>
 <%@page import="com.vgec.bean.Question"%>
@@ -13,7 +14,7 @@
 	if (session.getAttribute("role") != null) {
 		userRole = (String) session.getAttribute("role");
 	}
-	if (userRole.equals("Student")) {
+	if (userRole.equals("Faculty")) {
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +27,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Give Tests</title>
+  <title>Edit Result</title>
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
@@ -50,42 +51,6 @@
   <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 	
 	<script>
-    var switchCount = 0;
-    let hidden, visibilityChange;
-    if (typeof document.hidden !== 'undefined') {
-        hidden = 'hidden';
-        visibilityChange = 'visibilitychange';
-    }
-    else if (typeof document.webkitHidden !== 'undefined') {
-        hidden = 'webkitHidden';
-        visibilityChange = 'webkitvisibilitychange';
-    }
-    else if (typeof document.msHidden !== 'undefined') {
-        hidden = 'msHidden';
-        visibilityChange = 'msvisibilitychange';
-    }
-    else {
-        hidden = null;
-        visibilityChange = null;
-    }
-
-    if (hidden !== null) {
-        document.addEventListener(visibilityChange, function (ev) {
-            console.log('visiblitychange', document[hidden]);
-            if (document.hidden) {
-                switchCount++;
-            }
-            else {
-                if (switchCount == 1) {
-                    alert('This is the warning for you ! Do not try to change the tab now ');
-                }
-                if (switchCount > 1) {
-                    document.getElementById("btnFinishAttempt").click();
-                }
-            }
-        });
-
-    }
 var unhidden = 1;
 var unhidden1 = 2;
 function hide(i){
@@ -212,7 +177,7 @@ function unhide(i){
               <!-- Nav Item - User Information -->
               <li class="nav-item dropdown no-arrow">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">Student</span>
+                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">${sessionScope.facultyName}</span>
                   <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
                 </a>
                 <!-- Dropdown - User Information -->
@@ -228,70 +193,20 @@ function unhide(i){
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800"><%= session.getAttribute("subject")%></h1>
-        <div class="d-none d-sm-inline-block shadow-sm" style="color:blue">
-             Total Marks: <%= session.getAttribute("totalmarks")%></div>
-    </div>
-<form class="user" method="POST" id="myForm" action="StoreAnswers">
+<form class="user" method="POST" id="myForm">
     <div class="row">
 		
         <div class="col-lg-9">
 		
-		<% ArrayList<Question> qls = TestDAO.getQuestions(Integer.parseInt(String.valueOf(session.getAttribute("testid"))));
+		<% 
+			ArrayList<Marksheet> qls = TestDAO.getMarkSheet(Integer.parseInt(request.getParameter("id")),request.getParameter("erno"));
 			session.setAttribute("qls",qls);
 			int size = qls.size();
 			pageContext.setAttribute("size", size);
 		%>
 		
 		<c:forEach items="${qls}" var="item" varStatus="loop">
-		<c:choose>
-		    <c:when test="${item.type == 0}">
-		        <!-- Question 1 -->
-                  <div class="card shadow mb-4" id="q${loop.index+1}" style="visibility:hidden;display:none;">
-                      <div class="card-header py-2 d-sm-flex justify-content-between">
-                          <h6 class="m-0 font-weight-bold text-primary">Question ${loop.index +1 }</h6>
-                          <div> ${item.marks } Marks, ${item.co }</div>
-                      </div>
-                      <div class="card-body">
-                          <h6 class="font-weight-bold">${item.question }</h6>
-                          <div>
-                              <div class="form-check-inline">
-                                  <input class="form-check-input" type="radio" name="ques${item.id}"
-                                      id="option1ForQuestionId" value="1">
-                                  <label class="form-check-label" for="option1ForQuestion">
-                                      ${item.a }
-                                  </label>
-                              </div>
-								<br>
-                              <div class="form-check-inline">
-                                  <input class="form-check-input" type="radio" name="ques${item.id}"
-                                      id="option2ForQuestionId" value="2">
-                                  <label class="form-check-label" for="option2ForQuestion">
-                                      ${item.b }
-                                  </label>
-                              </div>
-								<br>
-                              <div class="form-check-inline">
-                                  <input class="form-check-input" type="radio" name="ques${item.id}"
-                                      id="option3ForQuestionId" value="3">
-                                  <label class="form-check-label" for="option3ForQuestion">
-                                      ${item.c }
-                                  </label>
-                              </div>
-								<br>
-                              <div class="form-check-inline">
-                                  <input class="form-check-input" type="radio" name="ques${item.id}"
-                                      id="option4ForQuestionId" value="4">
-                                  <label class="form-check-label" for="option4ForQuestion">
-                                      ${item.d }
-                                  </label>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-		    </c:when>    
-		    <c:otherwise>
+
 		    <!-- Question 2 -->
             <div class="card shadow mb-4" id="q${loop.index+1 }" style="visibility:hidden;display:none;">
                 <div class="card-header py-2 d-sm-flex justify-content-between">
@@ -302,61 +217,19 @@ function unhide(i){
                     <h6 class="font-weight-bold">${item.question }</h6>
                     <div>
                         <div class="form-group">
-                            <textarea class="form-control" rows="5" id="questionId" name="ques${item.id}"></textarea>
+                            <textarea class="form-control" rows="5" id="questionId" readonly>${item.actualans }</textarea>
                         </div>
                     </div>
                 </div>
+                <div class="card-footer py-2 d-sm-flex justify-content-end">
+                    <div id="marks2">
+                        Given Marks: <input type="text" style="width:20% ;text-align : center" value="${item.marksobt }" name="marks${item.id}"
+                            class="ml-1"></input>
+                    </div>
+                </div>
             </div>
-		    </c:otherwise>
-		</c:choose>
-          
-          
 		</c:forEach>
         </div>                        
-
-        <div class="col-lg-3">
-
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Time Left</h6>
-                </div>
-                <div class="card-body">
-                    <div id="countdown" class="px-5 py-2 bg-gray-900 text-white">
-                        <div align="center" id='tiles'></div>
-                    </div>
-					
-                    <script>
-                    	window.localStorage.setItem('endTime', <%=session.getAttribute("endtime")%>);
-                        var hours, minutes, seconds; // variables for time units
-                        var countdown = document.getElementById("tiles"); // get tag element
-                        getCountdown();
-                        setInterval(function () { getCountdown(); }, 1000);
-
-                        function getCountdown() {
-                        	
-                        	var current = new Date();
-                        	var n = Number(window.localStorage.getItem('endTime'))
-                        	var end = new Date(n+1);
-                        	if(end.getTime() > current.getTime()){
-                        		var seconds_left = end.getTime() - current.getTime();
-               					seconds_left = seconds_left / 1000;
-               					console.log(seconds_left);
-                                hours = pad(parseInt(seconds_left / 3600));
-                                seconds_left = seconds_left % 3600;
-                                minutes = pad(parseInt(seconds_left / 60));
-                                seconds = pad(parseInt(seconds_left % 60));
-                                countdown.innerHTML = "<span>" + hours + "</span> : <span>" + minutes + "</span> : <span>" + seconds + "</span>";	
-                        	}else{
-								document.getElementById("btnFinishAttempt").click();                        		
-                        	}
-                        }
-
-                        function pad(n) {
-                            return (n < 10 ? '0' : '') + n;
-                        }
-                    </script>
-                </div>
-            </div>
 
             <!-- Jump to Page -->
             <div class="card shadow mb-4">
@@ -382,15 +255,19 @@ function unhide(i){
             
             </div>
 			
-            <Button type="submit" class="btn btn-info" id="btnFinishAttempt" name="btnFinishAttempt" form="myForm">Finish Attempt</Button>
+            <Button type="submit" class="btn btn-info" id="btnFinishAttempt" name="btnFinishAttempt" form="myForm">Edit Marks</Button>
             </div>	
-            </div>
+            
             </form>
         </div>
     </div>
     </div>
     <!-- /.container-fluid -->
-	
+	<%
+	if(request.getParameter("btnFinishAttempt") != null){
+		response.sendRedirect("facultyViewResult.jsp");
+	}
+	%>
 </div>
 <!-- End of Main Content -->
 <jsp:include page="studentFooter.jsp" />

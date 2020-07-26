@@ -15,7 +15,14 @@ public class Test {
 	Time totime;
 	int totalmarks;
 	String department;
+	int evaluated;
 	
+	public int getEvaluated() {
+		return evaluated;
+	}
+	public void setEvaluated(int evaluated) {
+		this.evaluated = evaluated;
+	}
 	public String getDepartment() {
 		return department;
 	}
